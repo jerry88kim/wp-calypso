@@ -86,12 +86,11 @@ export const MediaBasicsTour = makeTour(
 			target=".media-library__list-item"
 			style={ { marginTop: '-10px' } }
 		>
+			<p>
+				{ translate( 'Once you upload a file, you can edit its title, add a caption, and even do basic photo editing.' ) }
+			</p>
 			<Continue click step="click-to-edit" target=".media-library__list-item-figure">
-				{
-					translate( 'Once you upload a file, you can edit its title, add a caption, and even do basic photo editing. ' +
-						'To find these options, first click on a file to select it. '
-					)
-				}
+				{ translate( 'To find these options, click on this file to select it.' ) }
 			</Continue>
 		</Step>
 
@@ -103,7 +102,7 @@ export const MediaBasicsTour = makeTour(
 		>
 			<Continue click step="launch-modal" target=".editor-media-modal__secondary-action">
 				{
-					translate( 'Then, click the {{strong}}Edit{{/strong}} button.',
+					translate( 'Now click the {{strong}}Edit{{/strong}} button.',
 						{
 							components: {
 								strong: <strong />,
@@ -115,9 +114,7 @@ export const MediaBasicsTour = makeTour(
 		</Step>
 
 		<Step name="launch-modal"
-			placement="beside"
-			arrow="right-top"
-			target=".editor-media-modal-detail__sidebar"
+			placement="center"
 		>
 			<p>
 				{ translate( 'Here you can edit the title, add a caption, find the media URL, and see other details.' ) }
@@ -140,6 +137,25 @@ export const MediaBasicsTour = makeTour(
 						{
 							components: {
 								icon: <Gridicon icon="pencil" />,
+								strong: <strong />,
+							}
+						}
+					)
+				}
+			</p>
+			<ButtonRow>
+				<Next step="done" />
+				<Quit />
+			</ButtonRow>
+		</Step>
+		<Step name="done"
+			placement="center"
+		>
+			<p>
+				{
+					translate( "That's it! Click {{strong}}Done{{/strong}} to go back to your full library. Happy uploading!",
+						{
+							components: {
 								strong: <strong />,
 							}
 						}
