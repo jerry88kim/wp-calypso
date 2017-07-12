@@ -19,6 +19,7 @@ import {
 	Continue
 } from 'layout/guided-tours/config-elements';
 import {
+	doesSelectedSiteHaveMediaFiles,
 	isNewUser,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
@@ -31,6 +32,7 @@ export const MediaBasicsTour = makeTour(
 		when={ and(
 			isDesktop,
 			isNewUser,
+			doesSelectedSiteHaveMediaFiles,
 		) }
 	>
 		<Step
