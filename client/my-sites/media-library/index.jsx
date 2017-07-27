@@ -33,6 +33,7 @@ module.exports = React.createClass( {
 		source: React.PropTypes.string,
 		onAddMedia: React.PropTypes.func,
 		onFilterChange: React.PropTypes.func,
+		onSourceChange: React.PropTypes.func,
 		onSearch: React.PropTypes.func,
 		onScaleChange: React.PropTypes.func,
 		onEditItem: React.PropTypes.func,
@@ -170,6 +171,7 @@ module.exports = React.createClass( {
 					enabledFilters={ this.props.enabledFilters }
 					search={ this.props.search }
 					onFilterChange={ this.props.onFilterChange }
+					onSourceChange={ this.props.onSourceChange }
 					source={ this.props.source }
 					onSearch={ this.doSearch }
 					post={ !! this.props.postId } />
