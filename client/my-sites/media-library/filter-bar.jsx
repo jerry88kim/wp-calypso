@@ -8,6 +8,7 @@ import {
 	includes,
 	noop,
 	pull,
+	find,
 } from 'lodash';
 
 /**
@@ -19,7 +20,7 @@ import Search from 'components/search';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlanStorage from 'blocks/plan-storage';
 import FilterItem from './filter-item';
-import TitleItem from './title-item';
+import SelectDropdown from 'components/select-dropdown';
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
@@ -31,6 +32,7 @@ export class MediaLibraryFilterBar extends Component {
 		source: React.PropTypes.string,
 		site: React.PropTypes.object,
 		onFilterChange: React.PropTypes.func,
+		onSourceChange: React.PropTypes.func,
 		onSearch: React.PropTypes.func,
 		translate: React.PropTypes.func,
 		post: React.PropTypes.bool
@@ -40,6 +42,7 @@ export class MediaLibraryFilterBar extends Component {
 		filter: '',
 		basePath: '/media',
 		onFilterChange: noop,
+		onSourceChange: noop,
 		onSearch: noop,
 		translate: identity,
 		source: '',
@@ -90,16 +93,24 @@ export class MediaLibraryFilterBar extends Component {
 
 	changeFilter = filter => {
 		this.props.onFilterChange( filter );
+	changeSource = item => {
 	};
 
-	renderSectionTitle() {
+		this.props.onSourceChange( item.value );
+	};
+
+	renderDataSource() {
 		const { translate } = this.props;
+		const sources = [
+			{ value: '', label: translate( 'WordPress' ) },
+			{ value: 'google_photos', label: translate( 'Google' ) },
+		];
+		const currentSelected = find( sources, item => item.value === this.props.source );
+		const selectedText = currentSelected ? currentSelected.label : '';
 
-		if ( this.props.source === 'google_photos' ) {
-			return <TitleItem>{ translate( 'Recent photos from Google' ) }</TitleItem>;
-		}
-
-		return null;
+		return (
+			<SelectDropdown selectedText={ selectedText } options={ sources } onSelect={ this.changeSource } />
+		);
 	}
 
 	renderTabItems() {
@@ -163,12 +174,15 @@ export class MediaLibraryFilterBar extends Component {
 		// Dropdown is disabled when viewing any external data source
 		return (
 			<div className="media-library__filter-bar">
+				<div className="media-library__datasource">
+					{ this.renderDataSource() }
+				</div>
+
 				<SectionNav
 					selectedText={ this.getFilterLabel( this.props.filter ) }
 					hasSearch={ true }
 					allowDropdown={ ! this.props.source }
 				>
-					{ this.renderSectionTitle() }
 					{ this.renderTabItems() }
 					{ this.renderSearchSection() }
 				</SectionNav>
