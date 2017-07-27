@@ -166,7 +166,12 @@ export const twoFactorAuthPushPoll = createReducer( { inProgress: false, success
 
 export const socialAccount = createReducer( { isCreating: false }, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => ( { isCreating: true } ),
-	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => ( { isCreating: false, createError: error } ),
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error, token, service } ) => ( {
+		isCreating: false,
+		createError: error,
+		createToken: token,
+		createService: service,
+	} ),
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: ( state, { data: { username, bearerToken } } ) => ( {
 		isCreating: false,
 		username,

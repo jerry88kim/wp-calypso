@@ -65,7 +65,7 @@ class ErrorNotice extends Component {
 		 * The existing_wpcom_user error is caught in SocialLoginForm.
 		 * The relevant messages are displayed inline in LoginForm.
 		*/
-		if ( error.code === 'existing_wpcom_user' ) {
+		if ( error.code === 'existing_wpcom_user' || error.code === 'user_exists' ) {
 			return null;
 		}
 
