@@ -16,10 +16,11 @@ import { getSelectedSite } from 'state/ui/selectors';
 module.exports = {
 
 	media: function( context ) {
-		var MediaComponent = require( 'my-sites/media/main' ),
+		const MediaComponent = require( 'my-sites/media/main' ),
 			filter = context.params.filter,
 			search = context.query.s,
-			baseAnalyticsPath = route.sectionify( context.path );
+			source = context.query.source;
+		let baseAnalyticsPath = route.sectionify( context.path );
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
@@ -38,8 +39,9 @@ module.exports = {
 		renderWithReduxStore(
 			React.createElement( MediaComponent, {
 				selectedSite,
-				filter: filter,
-				search: search
+				filter,
+				search,
+				source,
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
