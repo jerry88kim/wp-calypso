@@ -14,6 +14,7 @@ import {
 import async from 'async';
 import { parse as parseURL } from 'url';
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -293,7 +294,7 @@ module.exports = {
 			// We're creating a new social account
 			wpcom.undocumented().usersSocialNew( service, token, flowName, ( error, response ) => {
 				const errors = error && error.error
-					? [ { error: error.error, message: error.message, email: error.email } ]
+					? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
 					: undefined;
 
 				if ( errors ) {
