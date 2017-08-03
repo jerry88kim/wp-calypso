@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import defer from 'lodash/defer';
+import { defer, find, some } from 'lodash';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -25,14 +25,14 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	getRequestError,
 	isFormDisabled,
-	getCreateSocialAccountError,
+	getCreateSocialAccountErrors,
 } from 'state/login/selectors';
 import Notice from 'components/notice';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		createSocialAccountError: PropTypes.object,
+		createSocialAccountErrors: PropTypes.array,
 		formUpdate: PropTypes.func.isRequired,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
@@ -88,12 +88,20 @@ export class LoginForm extends Component {
 		this.setState( { [ name ]: checked } );
 	};
 
+	getErrorWithEmailFromCreateErrors() {
+		if ( ! Array.isArray( this.props.createSocialAccountErrors ) ) {
+			return null;
+		}
+
+		return find( this.props.createSocialAccountErrors, errorData => !! errorData.error.email );
+	}
+
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
 		const { password } = this.state;
-		const usernameOrEmail = this.state.usernameOrEmail ||
-			( this.props.createSocialAccountError && this.props.createSocialAccountError.email );
+		const errorWithEmail = this.getErrorWithEmailFromCreateErrors();
+		const usernameOrEmail = this.state.usernameOrEmail || errorWithEmail ? errorWithEmail.error.email : '';
 		const { onSuccess, redirectTo } = this.props;
 
 		const rememberMe = this.isLinkingSocialUser() ? true : this.state.rememberMe;
@@ -121,9 +129,9 @@ export class LoginForm extends Component {
 	};
 
 	isLinkingSocialUser() {
-		return this.props.createSocialAccountError &&
-			( this.props.createSocialAccountError.code === 'user_exists' ||
-				this.props.createSocialAccountError.code === 'wpcom_user_exists' );
+		return this.props.createSocialAccountErrors &&
+			some( this.props.createSocialAccountErrors, errorData => errorData.error.code === 'user_exists' ||
+				errorData.error.code === 'wpcom_user_exists' );
 	}
 
 	renderPrivateSiteNotice() {
@@ -144,12 +152,10 @@ export class LoginForm extends Component {
 		if ( this.state.isDisabledWhileLoading || this.props.isFormDisabled ) {
 			isDisabled.disabled = true;
 		}
-
+		const errorWithEmail = this.getErrorWithEmailFromCreateErrors();
 		const { requestError } = this.props;
 		const linkingSocialUser = this.isLinkingSocialUser();
-		const usernameOrEmail = this.state.usernameOrEmail ||
-			( this.props.createSocialAccountError && this.props.createSocialAccountError.email ) ||
-			'';
+		const usernameOrEmail = this.state.usernameOrEmail || errorWithEmail ? errorWithEmail.error.email : '';
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
@@ -163,8 +169,8 @@ export class LoginForm extends Component {
 									{ this.props.translate( 'We found a WordPress.com account with the email address "%(email)s". ' +
 										'Log in to this account to connect it to your %(service)s profile.', {
 											args: {
-												email: this.props.createSocialAccountError.email,
-												service: this.props.createSocialAccountErrorService,
+												email: errorWithEmail.error.email,
+												service: errorWithEmail.service,
 											}
 										}
 									) }
@@ -256,7 +262,7 @@ export class LoginForm extends Component {
 						<div className="login__form-social">
 							<SocialLoginForm
 								onSuccess={ this.props.onSuccess }
-								linkingSocialService={ this.props.createSocialAccountErrorService } />
+								linkingSocialService={ errorWithEmail ? errorWithEmail.service : null } />
 						</div>
 					</Card>
 				) }
@@ -270,8 +276,7 @@ export default connect(
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
 		requestError: getRequestError( state ),
 		isFormDisabled: isFormDisabled( state ),
-		createSocialAccountError: getCreateSocialAccountError( state ),
-		createSocialAccountErrorService: 'google',
+		createSocialAccountErrors: getCreateSocialAccountErrors( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) )
 	} ),
 	{

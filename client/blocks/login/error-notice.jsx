@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,14 +11,14 @@ import { connect } from 'react-redux';
 import {
 	getRequestError,
 	getTwoFactorAuthRequestError,
-	getCreateSocialAccountError,
+	getCreateSocialAccountErrors,
 	getRequestSocialAccountError,
 } from 'state/login/selectors';
 import Notice from 'components/notice';
 
 class ErrorNotice extends Component {
 	static propTypes = {
-		createAccountError: PropTypes.object,
+		createAccountErrors: PropTypes.array,
 		requestAccountError: PropTypes.object,
 		requestError: PropTypes.object,
 		twoFactorAuthRequestError: PropTypes.object,
@@ -29,29 +30,32 @@ class ErrorNotice extends Component {
 		};
 
 		if (
-			receiveNewError( 'createAccountError' ) ||
+			receiveNewError( 'createAccountErrors' ) ||
 			receiveNewError( 'requestAccountError' ) ||
 			receiveNewError( 'requestError' ) ||
 			receiveNewError( 'twoFactorAuthRequestError' )
 		) {
 			window.scrollTo( 0, 0 );
 		}
-	}
+	};
 
-	getCreateAccountError() {
-		const { createAccountError } = this.props;
+	getLastCreateAccountError() {
+		const { createAccountErrors } = this.props;
 
-		if ( createAccountError && createAccountError.code !== 'unknown_user' ) {
-			return createAccountError;
+		if ( ! createAccountErrors ) {
+			return null;
 		}
 
-		return null;
+		return get(
+			find( createAccountErrors, createAccountError => createAccountError.error.code !== 'unknown_user' ),
+			'error'
+		);
 	}
 
 	getError() {
 		const { requestAccountError, requestError, twoFactorAuthRequestError } = this.props;
 
-		return requestError || twoFactorAuthRequestError || requestAccountError || this.getCreateAccountError();
+		return requestError || twoFactorAuthRequestError || requestAccountError || this.getLastCreateAccountError();
 	}
 
 	render() {
@@ -79,7 +83,7 @@ class ErrorNotice extends Component {
 
 export default connect(
 	( state ) => ( {
-		createAccountError: getCreateSocialAccountError( state ),
+		createAccountErrors: getCreateSocialAccountErrors( state ),
 		requestAccountError: getRequestSocialAccountError( state ),
 		requestError: getRequestError( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),

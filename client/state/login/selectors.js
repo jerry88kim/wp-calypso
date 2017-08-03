@@ -207,7 +207,7 @@ export const getCreatedSocialAccountBearerToken = ( state ) => get( state, 'logi
  * @param  {Object}   state  Global state tree
  * @return {?Object}         Error for the create social account request.
  */
-export const getCreateSocialAccountError = ( state ) => get( state, 'login.socialAccount.createError', null );
+export const getCreateSocialAccountErrors = ( state ) => get( state, 'login.socialAccount.createErrors', null );
 
 /***
  * Gets error for the get social account request.

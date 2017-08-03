@@ -168,9 +168,9 @@ export const socialAccount = createReducer( { isCreating: false }, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => ( { isCreating: true } ),
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error, token, service } ) => ( {
 		isCreating: false,
-		createError: error,
-		createToken: token,
-		createService: service,
+		createErrors: Array.isArray( state.createErrors )
+			? [ ...state.createErrors, { error, token, service } ]
+			: [ { error, token, service } ],
 	} ),
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: ( state, { data: { username, bearerToken } } ) => ( {
 		isCreating: false,
