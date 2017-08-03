@@ -1,7 +1,21 @@
 {
   "name": "wp-calypso",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "dependencies": {
+    "@automattic/simple-components": {
+      "version": "0.1.0-alpha.3",
+      "dependencies": {
+        "classnames": {
+          "version": "2.2.5"
+        },
+        "lodash": {
+          "version": "4.17.4"
+        },
+        "react": {
+          "version": "15.6.1"
+        }
+      }
+    },
     "@types/node": {
       "version": "6.0.85",
       "dev": true
@@ -14,6 +28,10 @@
       "dependencies": {
         "ast-types": {
           "version": "0.9.11",
+          "dev": true
+        },
+        "core-js": {
+          "version": "2.4.1",
           "dev": true
         },
         "esprima": {
@@ -252,6 +270,9 @@
       "dependencies": {
         "babel-register": {
           "version": "6.24.1"
+        },
+        "core-js": {
+          "version": "2.4.1"
         },
         "source-map": {
           "version": "0.5.6"
@@ -578,7 +599,13 @@
     },
     "babel-polyfill": {
       "version": "6.23.0",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "core-js": {
+          "version": "2.4.1",
+          "dev": true
+        }
+      }
     },
     "babel-preset-es2015": {
       "version": "6.9.0"
@@ -618,6 +645,9 @@
     "babel-register": {
       "version": "6.9.0",
       "dependencies": {
+        "core-js": {
+          "version": "2.4.1"
+        },
         "home-or-tmp": {
           "version": "1.0.0"
         },
@@ -633,7 +663,12 @@
       }
     },
     "babel-runtime": {
-      "version": "6.25.0"
+      "version": "6.25.0",
+      "dependencies": {
+        "core-js": {
+          "version": "2.4.1"
+        }
+      }
     },
     "babel-template": {
       "version": "6.25.0"
@@ -729,6 +764,9 @@
       "dependencies": {
         "debug": {
           "version": "2.6.7"
+        },
+        "iconv-lite": {
+          "version": "0.4.15"
         },
         "ms": {
           "version": "2.0.0"
@@ -1426,7 +1464,7 @@
       }
     },
     "core-js": {
-      "version": "2.4.1"
+      "version": "1.2.7"
     },
     "core-util-is": {
       "version": "1.0.2"
@@ -2225,13 +2263,7 @@
     },
     "external-editor": {
       "version": "2.0.4",
-      "dev": true,
-      "dependencies": {
-        "iconv-lite": {
-          "version": "0.4.18",
-          "dev": true
-        }
-      }
+      "dev": true
     },
     "extglob": {
       "version": "0.3.2",
@@ -2293,21 +2325,12 @@
       "version": "2.1.1"
     },
     "fbjs": {
-      "version": "0.8.14",
-      "dependencies": {
-        "core-js": {
-          "version": "1.2.7"
-        }
-      }
+      "version": "0.8.14"
     },
     "fbjs-scripts": {
       "version": "0.7.1",
       "dev": true,
       "dependencies": {
-        "core-js": {
-          "version": "1.2.7",
-          "dev": true
-        },
         "cross-spawn": {
           "version": "3.0.1",
           "dev": true
@@ -2404,9 +2427,6 @@
     "flux": {
       "version": "2.1.1",
       "dependencies": {
-        "core-js": {
-          "version": "1.2.7"
-        },
         "fbjs": {
           "version": "0.1.0-alpha.7"
         },
@@ -3379,7 +3399,7 @@
       }
     },
     "iconv-lite": {
-      "version": "0.4.15"
+      "version": "0.4.18"
     },
     "ieee754": {
       "version": "1.1.8"
@@ -4106,10 +4126,6 @@
         },
         "colors": {
           "version": "1.1.2",
-          "dev": true
-        },
-        "core-js": {
-          "version": "1.2.7",
           "dev": true
         },
         "detect-indent": {
@@ -5706,7 +5722,12 @@
       "version": "1.0.3"
     },
     "raw-body": {
-      "version": "2.2.0"
+      "version": "2.2.0",
+      "dependencies": {
+        "iconv-lite": {
+          "version": "0.4.15"
+        }
+      }
     },
     "rc": {
       "version": "1.2.1",
