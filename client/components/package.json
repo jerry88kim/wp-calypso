@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/Automattic/wp-calypso/blob/master/docs/components.md",
   "main": "./cjs/index.js",
-  "module": "./index.js",
+  "esnext": "./index.js",
   "files": [
     "index.js",
     "cjs/",
