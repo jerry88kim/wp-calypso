@@ -240,3 +240,5 @@ export const getLinkingSocialService = ( state ) => get( state, 'login.socialAcc
  * @return {?String}         Token of the social account.
  */
 export const getLinkingSocialToken = ( state ) => get( state, 'login.socialAccount.token', null );
+
+export const getOauthClientId = ( state ) => get( state, 'login.oauth.clientId', null );
