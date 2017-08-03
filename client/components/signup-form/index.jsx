@@ -121,6 +121,18 @@ class SignupForm extends Component {
 		this.setState( { form: stateWithFilledUsername } );
 	}
 
+	getUserExistsError( props ) {
+		const { step } = props;
+
+		if ( ! step || step.status !== 'invalid' ) {
+			return null;
+		}
+
+		const userExistsError = find( step.errors, error => error.error === 'user_exists' );
+
+		return userExistsError;
+	}
+
 	/***
 	 * If the step is invalid because we had an error that the user exists,
 	 * we should prompt user with a request to connect his social account
@@ -129,11 +141,7 @@ class SignupForm extends Component {
 	 * @param {Object} props react component props that has step info
 	 */
 	maybeRedirectToSocialConnect( props ) {
-		if ( ! props.step || props.step.status !== 'invalid' ) {
-			return;
-		}
-
-		const userExistsError = find( props.step.errors, error => error.error === 'user_exists' );
+		const userExistsError = this.getUserExistsError( props );
 
 		if ( userExistsError ) {
 			const { service, token } = props.step;
@@ -530,6 +538,10 @@ class SignupForm extends Component {
 	}
 
 	render() {
+		if ( this.getUserExistsError( this.props ) ) {
+			return null;
+		}
+
 		return (
 			<div className={ classNames( 'signup-form', this.props.className ) }>
 
