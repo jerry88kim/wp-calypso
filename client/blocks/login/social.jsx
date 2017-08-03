@@ -61,7 +61,7 @@ class SocialLoginForm extends Component {
 									error_message: createAccountError.message
 								} )
 							);
-					} else if ( error.code === 'existing_wpcom_user' ) {
+					} else if ( error.code === 'user_exists' ) {
 						this.props.createSocialUserFailed( 'google', response.Zi.id_token, error );
 					}
 

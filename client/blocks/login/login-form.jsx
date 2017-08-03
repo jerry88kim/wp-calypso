@@ -130,8 +130,7 @@ export class LoginForm extends Component {
 
 	isLinkingSocialUser() {
 		return this.props.createSocialAccountErrors &&
-			some( this.props.createSocialAccountErrors, errorData => errorData.error.code === 'user_exists' ||
-				errorData.error.code === 'wpcom_user_exists' );
+			some( this.props.createSocialAccountErrors, errorData => errorData.error.code === 'user_exists' );
 	}
 
 	renderPrivateSiteNotice() {
