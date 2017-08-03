@@ -17,9 +17,26 @@ import { displayRequestTransferCodeResponseNotice } from './shared';
 import support from 'lib/url/support';
 
 class Unlocked extends React.Component {
-	state = {
-		submitting: false
-	};
+
+	constructor( props ) {
+		super( props );
+
+		const {
+			pendingTransfer,
+			domainLockingAvailable,
+			hasPrivacyProtection,
+		} = getSelectedDomain( this.props );
+
+		this.state = { submitting: false, canceled: false };
+
+		if ( ! ( pendingTransfer || domainLockingAvailable || hasPrivacyProtection ) ) {
+			// This domain doesn't need any fanfare, so we will have come
+			// straight here (bypassing the "locked" step) and we can just
+			// send the auth code request.
+			this.state = { submitting: true, canceled: false };
+			this.sendConfirmationCode();
+		}
+	}
 
 	handleCancelTransferClick = () => {
 		const { translate } = this.props;
@@ -71,10 +88,10 @@ class Unlocked extends React.Component {
 						break;
 				}
 				notices.error( errorMessage );
-			} else if ( hasPrivacyProtection ) {
-				notices.success( translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
-					'Privacy Protection has been enabled.' ) );
 			} else {
+				// Success.
+				this.setState( { canceled: true } );
+
 				let successMessage;
 				if ( enablePrivacy && lockDomain ) {
 					successMessage = translate( 'We\'ve canceled your domain transfer. Your domain is now re-locked and ' +
@@ -91,13 +108,17 @@ class Unlocked extends React.Component {
 
 				notices.success( successMessage );
 			}
+
 			this.setState( { submitting: false } );
 		} );
 	};
 
 	handleResendConfirmationCodeClick = () => {
 		this.setState( { submitting: true } );
+		this.sendConfirmationCode();
+	}
 
+	sendConfirmationCode() {
 		const options = {
 			siteId: this.props.selectedSite.ID,
 			domainName: this.props.selectedDomainName,
@@ -106,13 +127,14 @@ class Unlocked extends React.Component {
 		};
 
 		requestTransferCode( options, ( error ) => {
-			this.setState( { submitting: false } );
+			this.setState( { submitting: false, canceled: false } );
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
 		} );
-	};
+	}
 
 	render() {
 		const { translate } = this.props;
+		const { submitting, canceled } = this.state;
 		const {
 			privateDomain,
 			hasPrivacyProtection,
@@ -121,9 +143,11 @@ class Unlocked extends React.Component {
 			domainLockingAvailable,
 		} = getSelectedDomain( this.props );
 
-		let domainStateMessage;
+		let domainStateMessage, statusMessage;
 
-		if ( pendingTransfer ) {
+		if ( canceled ) {
+			domainStateMessage = null;
+		} else if ( pendingTransfer ) {
 			domainStateMessage = translate( 'Your domain is pending transfer.' );
 		} else if ( domainLockingAvailable && hasPrivacyProtection && ! privateDomain ) {
 			domainStateMessage = translate( 'Your domain is unlocked and Privacy Protection has been disabled' +
@@ -133,6 +157,22 @@ class Unlocked extends React.Component {
 		}
 		// If the domain doesn't support locking don't even mention it, it would
 		// just confuse the user.
+
+		if ( submitting ) {
+			statusMessage = translate( 'Sending request…' );
+		} else if ( canceled ) {
+			// If we've enabled privacy we'll be redirected
+			// to the locked page, so we only need the base message here.
+			statusMessage = translate( 'We\'ve canceled your domain transfer.' );
+		} else if ( manualTransferRequired ) {
+			statusMessage = translate( 'The registry for your domain requires a special process for transfers. ' +
+				'Our Happiness Engineers have been notified about your transfer request and will be in touch ' +
+				'shortly to help you complete the process.' );
+		} else {
+			statusMessage = translate( 'We have sent the transfer authorization code to the domain registrant\'s' +
+				' email address. You must provide your registrar with your domain name and transfer code to complete' +
+				' the transfer process.' );
+		}
 
 		return (
 			<div>
@@ -152,15 +192,7 @@ class Unlocked extends React.Component {
 					<div>
 						{ domainStateMessage && <p>{ domainStateMessage }</p> }
 						<p>
-							{
-								! manualTransferRequired
-								? translate( 'We have sent the transfer authorization code to the domain registrant\'s' +
-									' email address. You must provide your registrar with your domain name and transfer code to complete' +
-									' the transfer process.' )
-								: translate( 'The registry for your domain requires a special process for transfers. ' +
-									'Our Happiness Engineers have been notified about your transfer request and will be in touch ' +
-									'shortly to help you complete the process.' )
-							} <a
+							{ statusMessage } <a
 							href={ support.TRANSFER_DOMAIN_REGISTRATION }
 							target="_blank"
 							rel="noopener noreferrer">{ translate( 'Learn More.' ) }</a>
