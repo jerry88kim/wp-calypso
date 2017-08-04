@@ -84,7 +84,7 @@ const webpackConfig = {
 		rules: [
 			{
 				test: /\.jsx?$/,
-				exclude: /node_modules[\/\\](?!notifications-panel)/,
+				exclude: /node_modules[\/\\](?!notifications-panel|@automattic\/simple-components)/,
 				loader: [ jsLoader ]
 			},
 			{

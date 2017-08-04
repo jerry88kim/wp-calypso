@@ -95,7 +95,7 @@ const webpackConfig = {
 			},
 			{
 				test: /\.jsx?$/,
-				exclude: /(node_modules|devdocs[\/\\]search-index)/,
+				exclude: /(node_modules[\/\\](?!@automattic\/simple-components)|devdocs[\/\\]search-index)/,
 				loader: [ jsLoader ]
 			},
 		]
