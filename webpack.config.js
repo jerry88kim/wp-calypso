@@ -122,6 +122,8 @@ const webpackConfig = {
 		],
 		alias: Object.assign(
 			{
+				'components/button': '@automattic/simple-components/button',
+				'components/main': '@automattic/simple-components/main',
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example'
 			},
