@@ -39,7 +39,7 @@ class Zone extends Component {
 
 				<form onSubmit={ this.onFormSubmit }>
 					<FormSection name="details">
-						<SectionHeader label={ translate( 'Zone details' ) }>
+						<SectionHeader label={ translate( 'Zone label' ) }>
 							<FormButton compact />
 						</SectionHeader>
 						<Card>
