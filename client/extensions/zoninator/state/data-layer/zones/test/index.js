@@ -3,13 +3,31 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { translate } from 'i18n-calypso';
+import {
+	startSubmit as startSave,
+	stopSubmit as stopSave,
+} from 'redux-form';
 
 /**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestZonesError, requestZonesList, updateZonesList } from '../';
-import { requestError, requestZones, updateZones } from 'zoninator/state/zones/actions';
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import {
+	announceSuccess,
+	announceFailure,
+	createZone,
+	requestZonesError,
+	requestZonesList,
+	updateZonesList
+} from '../';
+import {
+	requestError,
+	requestZones,
+	updateZone,
+	updateZones
+} from 'zoninator/state/zones/actions';
 
 const apiResponse = {
 	data: [
@@ -19,6 +37,11 @@ const apiResponse = {
 			description: 'A test zone.',
 		}
 	],
+};
+
+const zone = {
+	name: 'New zone',
+	description: 'A new zone',
 };
 
 describe( '#requestZonesList()', () => {
@@ -42,7 +65,7 @@ describe( '#requestZonesList()', () => {
 	} );
 } );
 
-describe( '#updateZonesList', () => {
+describe( '#updateZonesList()', () => {
 	it( 'should dispatch `updateZones`', () => {
 		const dispatch = sinon.spy();
 		const action = requestZones( 123456 );
@@ -60,7 +83,7 @@ describe( '#updateZonesList', () => {
 	} );
 } );
 
-describe( '#requestZonesError', () => {
+describe( '#requestZonesError()', () => {
 	it( 'should dispatch `requestError`', () => {
 		const dispatch = sinon.spy();
 		const action = requestError( 123456 );
@@ -69,5 +92,140 @@ describe( '#requestZonesError', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( requestError( 123456 ) );
+	} );
+} );
+
+describe( '#createZone()', () => {
+	it( 'should dispatch a HTTP request to create a new zone', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123456,
+			data: zone,
+			form: 'form',
+		};
+
+		createZone( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledWith( http( {
+			method: 'POST',
+			path: '/jetpack-blogs/123456/rest-api/',
+			query: {
+				body: JSON.stringify( {
+					...zone,
+					slug: zone.name,
+				} ),
+				json: true,
+				path: '/zoninator/v1/zones',
+			},
+		}, action ) );
+	} );
+
+	it( 'should dispatch `startSave`', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123456,
+			data: zone,
+			form: 'form',
+		};
+
+		createZone( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledWith( startSave( 'form' ) );
+	} );
+
+	it( 'should dispatch `removeNotice`', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123456,
+			data: zone,
+			form: 'form',
+		};
+
+		createZone( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledWith( removeNotice( 'zoninator-zone-create' ) );
+	} );
+} );
+
+describe( '#announceSuccess()', () => {
+	it( 'should dispatch `stopSave`', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123456,
+			data: zone,
+			form: 'form',
+		};
+
+		announceSuccess( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledWith( stopSave( 'form' ) );
+	} );
+
+	it( 'should dispatch `updateZone`', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123456,
+			data: zone,
+			form: 'form',
+		};
+
+		announceSuccess( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledWith( updateZone( 123456, zone ) );
+	} );
+
+	it( 'should dispatch `successNotice`', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123456,
+			data: zone,
+			form: 'form',
+		};
+
+		announceSuccess( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledWith( successNotice(
+			translate( 'Zone saved!' ),
+			{ id: 'zoninator-zone-create' },
+		) );
+	} );
+} );
+
+describe( '#announceFailure()', () => {
+	it( 'should dispatch `stopSave`', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123456,
+			data: zone,
+			form: 'form',
+		};
+
+		announceFailure( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledWith( stopSave( 'form' ) );
+	} );
+
+	it( 'should dispatch `errorNotice`', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123456,
+			data: zone,
+			form: 'form',
+		};
+
+		announceFailure( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledWith( errorNotice(
+			translate( 'There was a problem saving the zone. Please try again.' ),
+			{ id: 'zoninator-zone-create' },
+		) );
 	} );
 } );
