@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lodash/uniqueId', () => () => 'media-1' );
 
 /**
