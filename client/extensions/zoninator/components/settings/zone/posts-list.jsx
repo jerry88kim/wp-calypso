@@ -11,8 +11,6 @@ import PostCard from './post-card';
 import RecentPostsDropdown from './recent-posts-dropdown';
 import SearchAutocomplete from './../../search-autocomplete';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SortableList from 'components/forms/sortable-list';
 
 class PostsList extends Component {
@@ -54,14 +52,11 @@ class PostsList extends Component {
 		return (
 			<div>
 				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Add content' ) }
-					</FormLabel>
-					<FormSettingExplanation className="zone__setting-explanation">
+					<p className="zone__text">
 						{ translate(
 							'Add content to the zone by using search or by selecting it from the recent posts list below.'
 						) }
-					</FormSettingExplanation>
+					</p>
 					<SearchAutocomplete onSelect={ this.addPost( fields ) } ignored={ posts }>
 						<RecentPostsDropdown onSelect={ this.addPost( fields ) } ignored={ posts } />
 					</SearchAutocomplete>
@@ -69,14 +64,11 @@ class PostsList extends Component {
 
 				{
 					showPosts && <FormFieldset>
-						<FormLabel>
-							{ translate( 'Manage content' ) }
-						</FormLabel>
-						<FormSettingExplanation className="zone__setting-explanation">
-						{ translate(
-							'You can reorder the zone\'s conent by dragging it to a different location on the list.'
-						) }
-						</FormSettingExplanation>
+						<p className="zone__text">
+							{ translate(
+								'You can reorder the zone\'s conent by dragging it to a different location on the list.'
+							) }
+						</p>
 						<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
 							{ posts.map( ( post, idx ) => (
 								<PostCard
