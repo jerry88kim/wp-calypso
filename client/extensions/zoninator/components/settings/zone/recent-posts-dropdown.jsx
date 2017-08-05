@@ -10,6 +10,7 @@ import { find, flowRight } from 'lodash';
  * Internal dependencies
  */
 import QueryPosts from 'components/data/query-posts';
+import SelectDropdown from 'components/select-dropdown';
 import { getSitePostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -25,24 +26,25 @@ const RecentPostsDropdown = ( {
 	onSelect,
 	translate,
 } ) => {
-	const handleChange = event => {
-		const slug = event.target.value;
+	const handleSelect = option => {
+		const slug = option.value;
 
 		onSelect( find( recentPosts, { slug } ) );
 	};
 
-	const posts = ( recentPosts || [] ).filter( ( { slug } ) => ! find( ignored, { slug } ) );
-	const selectClass = 'is-compact';
+	const options = ( recentPosts || [] )
+		.filter( ( { slug } ) => ! find( ignored, { slug } ) )
+		.map( ( { slug, title } ) => ( { label: title, value: slug } ) );
 
 	return (
 		<div>
 			<QueryPosts siteId={ siteId } query={ recentPostsQuery } />
-			<select className={ selectClass } onChange={ handleChange } defaultValue="recent">
-				<option value="recent">{ translate( 'Recent posts' ) }</option>
-				{ posts.length > 0 && posts.map( post => (
-					<option key={ post.slug } value={ post.slug }>{ post.title }</option>
-				)	) }
-			</select>
+
+			<SelectDropdown
+				compact
+				selectedText={ translate( 'Recent posts' ) }
+				options={ options }
+				onSelect={ handleSelect } />
 		</div>
 	);
 };
