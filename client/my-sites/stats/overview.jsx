@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -32,8 +33,9 @@ class StatsOverview extends Component {
 		const statsPath = ( path === '/stats' ) ? '/stats/day' : path;
 		const sitesSorted = sites.map( ( site ) => {
 			let momentSiteZone = moment();
-			if ( 'object' === typeof ( site.options ) && 'undefined' !== typeof ( site.options.gmt_offset ) ) {
-				momentSiteZone = moment().utcOffset( site.options.gmt_offset );
+			const gmt_offset = get( site, 'options.gmt_offset' );
+			if ( gmt_offset || gmt_offset === 0 ) {
+				momentSiteZone = moment().utcOffset( gmt_offset );
 			}
 			site.periodEnd = momentSiteZone.endOf( period ).format( 'YYYY-MM-DD' );
 			return site;
@@ -62,14 +64,10 @@ class StatsOverview extends Component {
 		} );
 
 		const sitesList = sitesSorted.map( ( site, index ) => {
-			let siteOffset = 0;
 			const overview = [];
 
-			if ( 'object' === typeof ( site.options ) && 'undefined' !== typeof ( site.options.gmt_offset ) ) {
-				siteOffset = site.options.gmt_offset;
-			}
-
-			const date = moment().utcOffset( siteOffset ).format( 'YYYY-MM-DD' );
+			const siteOffset = get( site, 'options.gmt_offset' );
+			const date = moment().utcOffset( siteOffset ? siteOffset : 0 ).format( 'YYYY-MM-DD' );
 
 			if ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) {
 				overview.push( <DatePicker period={ period } date={ date } /> );
