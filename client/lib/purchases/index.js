@@ -172,8 +172,8 @@ function isRemovable( purchase ) {
 }
 
 /**
- * Checks whether the purchase is renewable per alot of underlying business logic
- * like "have we captured an auth?", "are we within 90 days of expiry?",
+ * Checks whether the purchase is in a renewable state per alot of underlying
+ * business logic like "have we captured an auth?", "are we within 90 days of expiry?",
  * "is this part of a bundle?", etc.
  *
  * @param {Object} purchase - the purchase with which we are concerned
@@ -214,9 +214,7 @@ function hasCreditCardData( purchase ) {
 
 /**
  * Checks whether the purchase is capable of explicit renew.
- * Some purchases (eg, .fr domains) are only renewable via auto-renew
- * so we need a way to programmatically hook this capabablity for
- * accurate call to action.
+ * Some purchases (eg, .fr domains) are only renewable via auto-renew.
  *
  * @param {Object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase is capable of explicit renew
