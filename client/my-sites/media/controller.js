@@ -18,8 +18,7 @@ module.exports = {
 	media: function( context ) {
 		const MediaComponent = require( 'my-sites/media/main' ),
 			filter = context.params.filter,
-			search = context.query.s,
-			source = context.query.source;
+			search = context.query.s;
 		let baseAnalyticsPath = route.sectionify( context.path );
 
 		const state = context.store.getState();
@@ -41,7 +40,6 @@ module.exports = {
 				selectedSite,
 				filter,
 				search,
-				source,
 			} ),
 			document.getElementById( 'primary' ),
 			context.store

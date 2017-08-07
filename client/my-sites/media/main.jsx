@@ -34,6 +34,7 @@ class Media extends Component {
 		editedImageItem: null,
 		editedVideoItem: null,
 		selectedItems: [],
+		source: '',
 	};
 
 	componentDidMount() {
@@ -218,11 +219,9 @@ class Media extends Component {
 		this.deleteMedia();
 	};
 
-	handleSourceChange = source => {
-		const param = ( source ? `?source=${ source }` : '' );
-
+	handleSourceChange = ( source, cb ) => {
 		MediaActions.sourceChanged( this.props.selectedSite.ID );
-		page( `/media/${ this.props.selectedSite.slug }` + param );
+		this.setState( { source }, cb );
 	};
 
 	deleteMediaByItemDetail = () => {
@@ -293,7 +292,7 @@ class Media extends Component {
 							site={ site }
 							single={ false }
 							filter={ this.props.filter }
-							source={ this.props.source }
+							source={ this.state.source }
 							onEditItem={ this.openDetailsModalForASingleImage }
 							onViewDetails={ this.openDetailsModalForAllSelected }
 							onDeleteItem={ this.handleDeleteMediaEvent }

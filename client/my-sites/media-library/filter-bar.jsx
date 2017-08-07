@@ -10,6 +10,8 @@ import {
 	pull,
 	find,
 } from 'lodash';
+import Gridicon from 'gridicons';
+import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
@@ -21,6 +23,9 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import PlanStorage from 'blocks/plan-storage';
 import FilterItem from './filter-item';
 import SelectDropdown from 'components/select-dropdown';
+import Button from 'components/button';
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
@@ -50,7 +55,12 @@ export class MediaLibraryFilterBar extends Component {
 	};
 
 	getSearchPlaceholderText() {
-		const { filter, translate } = this.props;
+		const { filter, translate, source } = this.props;
+
+		if ( source === 'google_photos' ) {
+			return translate( 'Smart search for places, things, dates…' );
+		}
+
 		switch ( filter ) {
 			case 'this-post':
 				return translate( 'Search media uploaded to this post…' );
@@ -86,6 +96,12 @@ export class MediaLibraryFilterBar extends Component {
 		}
 	}
 
+	constructor( props ) {
+		super( props );
+
+		this.state = { popover: false };
+	}
+
 	isFilterDisabled( filter ) {
 		const { enabledFilters } = this.props;
 		return enabledFilters && ( ! filter.length || ! includes( enabledFilters, filter ) );
@@ -93,23 +109,65 @@ export class MediaLibraryFilterBar extends Component {
 
 	changeFilter = filter => {
 		this.props.onFilterChange( filter );
-	changeSource = item => {
 	};
 
-		this.props.onSourceChange( item.value );
+	changeSource = item => {
+		const newSource = item.value ? item.value : item.target.getAttribute( 'action' );
+
+		if ( newSource !== this.props.source ) {
+			this.props.onSourceChange( newSource );
+		}
 	};
+
+	togglePopover = () => {
+		this.setState( { popover: ! this.state.popover } );
+	}
 
 	renderDataSource() {
-		const { translate } = this.props;
+		const { translate, source, site } = this.props;
+		const localLogo = site.icon && site.icon.img
+			? <img src={ site.icon.img } width="32" height="32" />
+			: <SocialLogo icon="wordpress" size={ 32 } />;
 		const sources = [
-			{ value: '', label: translate( 'WordPress' ) },
-			{ value: 'google_photos', label: translate( 'Google' ) },
+			{
+				value: '',
+				label: translate( 'WordPress' ),
+				icon: localLogo,
+			},
+			{
+				value: 'google_photos',
+				label: translate( 'Google' ),
+				icon: <img src="/calypso/images/sharing/google-photos-logo.svg" width="32" height="32" />
+			},
 		];
-		const currentSelected = find( sources, item => item.value === this.props.source );
-		const selectedText = currentSelected ? currentSelected.label : '';
+		const currentSelected = find( sources, item => item.value === source );
+		const selected = currentSelected ? currentSelected.icon : '';
+		const popoverOptions = sources.map( item =>
+			<PopoverMenuItem
+				action={ item.value }
+				key={ item.value }
+				onClick={ this.changeSource }
+				isSelected={ item.value === this.props.source }>
+				{ item.label }
+			</PopoverMenuItem>
+		);
 
 		return (
-			<SelectDropdown selectedText={ selectedText } options={ sources } onSelect={ this.changeSource } />
+				<Button borderless ref="popoverMenuButton" className="button media-library__source-button" onClick={ this.togglePopover }>
+					{ selected }
+
+					<Gridicon icon="chevron-down" />
+
+					<PopoverMenu
+						context={ this.refs && this.refs.popoverMenuButton }
+						isVisible={ this.state.popover }
+						position="bottom right"
+						onClose={ this.togglePopover }
+						className="is-dialog-visible media-library__header-popover">
+
+						{ popoverOptions }
+					</PopoverMenu>
+				</Button>
 		);
 	}
 
@@ -148,10 +206,12 @@ export class MediaLibraryFilterBar extends Component {
 			return null;
 		}
 
+		const isPinned = this.props.source === '';
+
 		return (
 			<Search
 				analyticsGroup="Media"
-				pinned
+				pinned={ isPinned }
 				fitsContainer
 				onSearch={ this.props.onSearch }
 				initialValue={ this.props.search }
