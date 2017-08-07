@@ -250,11 +250,11 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
  * Attempt to login a user with an external social account.
  *
  * @param  {String}    service    The external social service name.
- * @param  {String}    token      Authentication token provided by the external social service.
+ * @param  {String}    id_token   Authentication token provided by Google.
  * @param  {String}    redirectTo Url to redirect the user to upon successful login
  * @return {Function}             Action thunk to trigger the login process.
  */
-export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
+export const loginSocialUser = ( service, id_token, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' )
@@ -263,7 +263,7 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 		.accept( 'application/json' )
 		.send( {
 			service,
-			token,
+			id_token,
 			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
