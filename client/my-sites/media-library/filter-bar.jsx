@@ -22,7 +22,6 @@ import Search from 'components/search';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlanStorage from 'blocks/plan-storage';
 import FilterItem from './filter-item';
-import SelectDropdown from 'components/select-dropdown';
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
